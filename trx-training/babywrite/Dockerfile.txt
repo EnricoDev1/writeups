@@ -1,0 +1,20 @@
+FROM alpine:3.20
+
+RUN apk add --no-cache socat
+
+RUN adduser -D -H -s /sbin/nologin ctf
+WORKDIR /challenge
+
+COPY --chown=ctf:ctf chal ./chal
+COPY --chown=ctf:ctf ld-2.35.so libc.so.6 flag.txt ./
+
+RUN chmod 0555 ./chal ./ld-2.35.so \
+    && chmod 0444 ./libc.so.6 ./flag.txt \
+    && printf '%s\n' '#!/bin/sh' 'exec ./ld-2.35.so --library-path . ./chal' > ./run.sh \
+    && chmod 0555 ./run.sh \
+    && chown -R ctf:ctf /challenge
+
+USER ctf
+EXPOSE 1337
+
+CMD ["socat", "TCP-LISTEN:1337,reuseaddr,fork", "EXEC:./run.sh,stderr"]

@@ -1,0 +1,18 @@
+FROM ubuntu:22.04
+
+# Aggiunti gdb e procps
+RUN apt update && apt install -y socat gdb procps
+
+RUN useradd -d /home/chall/ -m -p chall -s /bin/bash chall
+RUN echo "chall:chall" | chpasswd
+
+WORKDIR /home/chall/
+COPY chall .
+COPY flag.txt .
+RUN chmod +x chall
+
+EXPOSE 1337
+
+USER chall
+
+CMD [ "socat", "TCP-LISTEN:1337,reuseaddr,fork", "EXEC:./chall" ]
