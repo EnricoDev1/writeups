@@ -4,7 +4,7 @@ set -euo pipefail
 TMP=$(mktemp -d)
 INITRD="$TMP/initramfs.cpio.gz"
 
-gcc -o exp -static ./exp.c
+musl-gcc -o exp -static ./exp.c
 
 cd ./rootfs
 cp ../exp .
@@ -22,4 +22,5 @@ qemu-system-x86_64 \
     -monitor /dev/null \
     -nographic \
     -drive format=raw,file=./flag,index=0,media=disk \
-    -s
+    -s \
+    -no-reboot
