@@ -1,4 +1,5 @@
 rootfs/
+rop.txt
 
 .cache/
 **/.cache/
